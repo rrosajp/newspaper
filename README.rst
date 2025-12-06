@@ -132,18 +132,6 @@ If no language is specified, Newspaper will attempt to auto detect a language.
     >>> print(a.title)
     港特首梁振英就住宅违建事件道歉
 
-
-Newspaper works better with proxies
-===================================
-Click here to try `RapidProxy`_, your all-in-one proxy solution. Enjoy unlimited, never-expiring traffic, fast and stable connections, and full anonymity. Start your free test today and experience hassle-free, reliable proxy services worldwide!
-
-.. image:: https://github.com/user-attachments/assets/719da34a-a0d1-4ee0-81fb-c626d7163616
-        :target: https://www.rapidproxy.io/?ref=gitnew
-        :alt: Experience RapidProxy, your all-in-one proxy solution. Enjoy unlimited, never-expiring traffic, fast and stable connections.
-
-.. _`RapidProxy`: https://www.rapidproxy.io/?ref=gitnew
-
-
 Multi-lingual
 =============
 
