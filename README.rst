@@ -287,6 +287,47 @@ Grab credentials and a free trial at `swiftproxy.net <https://www.swiftproxy.net
 .. _`Swiftproxy`: https://www.swiftproxy.net/?ref=codelucas
 
 
+Crawling several sources at once (without one IP taking all the heat)
+=====================================================================
+
+``news_pool`` will happily download hundreds of articles in parallel — and that is exactly the traffic pattern that gets a single IP rate-limited or banned mid-crawl. The clean fix is a rotating gateway: point ``config.proxies`` at one endpoint, and every request the thread pool makes leaves on a different residential IP.
+
+`IPcook`_ is built around that, automatic rotation on every request, with 55M+ residential IPs across 185+ locations behind one gateway, 99.99% uptime, and average response times under 0.5s, so the proxy hop never becomes the slow part of your crawl:
+
+.. code-block:: python
+
+    import newspaper
+    from newspaper import Config, news_pool
+
+    config = Config()
+    config.proxies = {
+        'http':  'http://USERNAME:PASSWORD@geo.ipcook.com:33123',
+        'https': 'http://USERNAME:PASSWORD@geo.ipcook.com:33123',
+    }
+    config.request_timeout = 15
+
+    papers = [
+        newspaper.build(source, config=config, memoize_articles=False)
+        for source in (
+            'https://www.bbc.com',
+            'https://www.reuters.com',
+            'https://techcrunch.com',
+        )
+    ]
+
+    # downloads run concurrently; each request exits on a fresh IP
+    news_pool.set(papers, threads_per_source=2)
+    news_pool.join()
+
+    for paper in papers:
+        for article in paper.articles:
+            article.parse()
+
+Swap in the credentials from your IPcook dashboard and the same ``config`` works everywhere else in the library too. Traffic is pay-as-you-go and never expires, so a crawl that runs once a week doesn't eat a monthly plan — though auto-renewing monthly plans are there if your pipeline runs hot. Start with 100MB free, and code ``WELCOME20`` takes 20% off.
+
+.. _`IPcook`: https://www.ipcook.com/?ref=HZLQIO&utm_source=github&utm_medium=referral&utm_campaign=codelucas_newspaper
+
+
 Docs
 ----
 
@@ -454,6 +495,29 @@ This is another working online demo: http://newspaper.chinazt.cc/
 Interested in scraping APIs & proxies?
 ======================================
 
+Reliable residential proxies for article scraping at scale
+----------------------------------------------------------
+
+.. image:: https://github.com/user-attachments/assets/e2e1bd8f-85f6-4ea3-8b27-e3a1e63c1d25
+        :target: https://www.ipcook.com/?ref=HZLQIO&utm_source=github&utm_medium=referral&utm_campaign=codelucas_newspaper
+        :alt: IPcook — residential proxies with automatic per-request rotation for article scraping at scale.
+
+`Try IPcook`_ — residential proxies made for large-scale article collection, rotating your IP automatically on every request to keep blocks and rate limits off your back. 55M+ residential IPs across 185+ locations, 99.99% uptime, and average responses under 0.5s. Pay as you go with traffic that never expires, or pick a monthly plan with automatic renewal. Your first 100MB is free, and code ``WELCOME20`` gets you 20% off.
+
+.. _`Try IPcook`: https://www.ipcook.com/?ref=HZLQIO&utm_source=github&utm_medium=referral&utm_campaign=codelucas_newspaper
+
+
+Power your scraping and automation at real-world scale
+------------------------------------------------------
+`Click here to try Swiftproxy`_ — built for developers running scraping, automation, and data collection workflows at scale. Access 80M+ residential IPs from $0.7/GB, fast ISP proxies from $6/IP, global coverage across 195+ countries, non-expiring traffic, and a 99.89% success rate. Free trial available — use code ``PROXY90`` for 10% off.
+
+.. image:: https://github.com/user-attachments/assets/913f1fd6-20e9-4f37-89b7-ba6b0bd0724a
+        :target: https://www.swiftproxy.net/?ref=codelucas
+        :alt: Swiftproxy — residential and ISP proxies built for scrapers and developers.
+
+.. _`Click here to try Swiftproxy`: https://www.swiftproxy.net/?ref=codelucas
+
+
 The all-in-one solution for global data scraping
 -------------------------------------------------
 `Click here to get started with Novada`_ — real residential proxies and scraping solutions that give reliable access to news pages at scale. 100M+ residential IPs across 195+ countries with a 99.99% success rate, plus Web Unblocker, Scraper API, and Browser API for when you'd rather be handed clean HTML or JSON than fight a captcha. Fewer blocks, and output that drops straight into your article extraction pipeline. Start with a $15 free trial across all products.
@@ -475,17 +539,6 @@ Scrape Google Search, Google News, Google Maps, and more!
         :alt: Scrape search engines easily with SerpApi - Search API.
 
 .. _`Click here to see SerpApi, scrape search engines easily with SerpApi - Search API`: https://serpapi.com?utm_source=newspaper3k_github
-
-
-Power your scraping and automation at real-world scale
-------------------------------------------------------
-`Click here to try Swiftproxy`_ — built for developers running scraping, automation, and data collection workflows at scale. Access 80M+ residential IPs from $0.7/GB, fast ISP proxies from $6/IP, global coverage across 195+ countries, non-expiring traffic, and a 99.89% success rate. Free trial available — use code ``PROXY90`` for 10% off.
-
-.. image:: https://github.com/user-attachments/assets/913f1fd6-20e9-4f37-89b7-ba6b0bd0724a
-        :target: https://www.swiftproxy.net/?ref=codelucas
-        :alt: Swiftproxy — residential and ISP proxies built for scrapers and developers.
-
-.. _`Click here to try Swiftproxy`: https://www.swiftproxy.net/?ref=codelucas
 
 
 Stay private, fast, and fully in control
